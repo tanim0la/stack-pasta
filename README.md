@@ -6,7 +6,8 @@ This extension makes life eaiser for HUFFOOOORS, as it copies previous stack com
 
 Hitting Enter ⏎ on your keyboard after the first stack comment does the magic.
 
-[Video]
+![stack-pasta-demo](https://github.com/tanim0la/stack-pasta/assets/36541366/e18cfe6e-15c9-4192-9b8b-5f3ccdeb6109)
+
 
 
 ## Requirements
