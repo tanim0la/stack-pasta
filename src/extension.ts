@@ -7,27 +7,35 @@ import * as vscode from "vscode";
 export function activate(context: vscode.ExtensionContext) {
   // Use the console to output diagnostic information (console.log) and errors (console.error)
   // This line of code will only be executed once when your extension is activated
-  console.log('Congratulations, your extension "stacker" is now active!');
+  console.log('Congratulations, your extension "stack-pasta" is now active!');
 
   let prevLineCount: number = vscode.window.activeTextEditor
     ? vscode.window.activeTextEditor.document.lineCount
     : 0;
 
+  vscode.window.onDidChangeActiveTextEditor((editor) => {
+    if (editor) {
+      prevLineCount = editor.document.lineCount;
+    }
+  });
+
   vscode.window.onDidChangeTextEditorSelection(async (onChange) => {
     const editor = onChange.textEditor;
-    // editor.
     const document = onChange.textEditor.document;
     const documentExt = document.uri.toString().slice(-5);
-    // console.log("here");
+
+    if (prevLineCount > document.lineCount) {
+      prevLineCount = document.lineCount;
+    }
+
     if (
       onChange.kind === undefined &&
       documentExt === ".huff" &&
-      prevLineCount < editor.document.lineCount
+      prevLineCount < document.lineCount
     ) {
-      //   console.log("here2");
-
       // The primary selection on the text editor
       const selection = editor.selection;
+
       // Get the position of the cursor
       let cursorIndex = selection.anchor.line;
 
@@ -36,12 +44,8 @@ export function activate(context: vscode.ExtensionContext) {
         cursorIndex > 0 ? cursorIndex - 1 : cursorIndex,
       ).text;
 
-      console.log(cursorIndexText);
-      console.log(cursorIndexText.toString().split("//"));
-
       let lineArr = cursorIndexText.toString().split("//");
       let firstItem = lineArr[0].trim().split(" ");
-      console.log(firstItem);
 
       if (
         lineArr.length === 2 &&
@@ -49,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
         firstItem[0] !== ""
       ) {
         editor.edit((editBuilder) => {
-          editBuilder.insert(selection.anchor, `    //${lineArr[1]}`);
+          editBuilder.insert(selection.active, `    //${lineArr[1]}`);
 
           vscode.window.showTextDocument(document).then((editor) => {
             editor.selection = new vscode.Selection(
@@ -67,53 +71,12 @@ export function activate(context: vscode.ExtensionContext) {
               editor.selection,
               vscode.TextEditorRevealType.Default,
             );
-
-            // console.log(editor.document.lineAt(selection.anchor.line).text);
-            // console.log("tani");
           });
         });
       }
+      prevLineCount = editor.document.lineCount;
     }
-    prevLineCount = editor.document.lineCount;
   });
-
-  // The command has been defined in the package.json file
-  // Now provide the implementation of the command with registerCommand
-  // The commandId parameter must match the command field in package.json
-  //   let disposable = vscode.commands.registerCommand("huff.stacker", async () => {
-  // Get the active text editor
-  // const editor = vscode.window.activeTextEditor;
-  // if (editor) {
-  //   // The document associated with the current text editor
-  //   const document = editor.document;
-  //   // Get document extenstion and assert it is a huff document
-  //   const ducomentExt = document.uri.toString().slice(-5);
-  //   if (ducomentExt === ".huff") {
-  //     // The primary selection on the text editor
-  //     const selection = editor.selection;
-  //     // Get the position of the cursor
-  //     let cursorIndex = selection.active.line;
-  //     // Read document content
-  //     let content = await vscode.workspace.fs.readFile(document.uri);
-  //     // Get the text on the cursor index
-  //     let cursorIndexText = content.toString().split("\n")[
-  //       cursorIndex === 0 ? cursorIndex : cursorIndex - 1
-  //     ];
-  //     console.log(cursorIndexText);
-  //     editor.edit((editBuilder) => {
-  //       editBuilder.insert(selection.active, "\nhi from me");
-  //     });
-  //   }
-  //   // Get the word within the selection
-  //   // const word = document.getText(selection);
-  //   // const reversed = word.split("").reverse().join("");
-  //   // editor.edit((editBuilder) => {
-  //   //   editBuilder.replace(selection, reversed);
-  //   // });
-  // }
-  //   });
-  //   context.extension.activate();
-  //   context.subscriptions.push(disposable);
 }
 
 // This method is called when your extension is deactivated

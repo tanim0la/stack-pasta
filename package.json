@@ -1,21 +1,35 @@
 {
-  "name": "stacker",
-  "displayName": "stacker",
-  "description": "automatically paste previous Huff stack comments ",
+  "name": "stack-pasta",
+  "displayName": "Stack Pasta",
+  "description": "Automatically paste previous Huff stack comments ",
   "version": "0.0.1",
+  "icon": "icon/pasta.jpg", 
+  "keywords": [
+    "ethereum",
+    "huff"
+  ],
+  "bugs": {
+    "url": "https://github.com/tanim0la/stack-pasta/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tanim0la/stack-pasta"
+  },
   "engines": {
     "vscode": "^1.83.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:huff"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "huff.stacker",
-        "title": "huff stacker"
+        "command": "huff.stack-pasta",
+        "title": "stack pasta"
       }
     ]
   },
