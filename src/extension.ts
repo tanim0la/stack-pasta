@@ -52,14 +52,16 @@ export function activate(context: vscode.ExtensionContext) {
       let lineArr = cursorIndexText.toString().split("//");
       let firstItem = lineArr[0].trim().split(" ");
 
+      console.log(document.lineAt(cursorIndex).text.trim() === "");
       if (
         lineArr.length === 2 &&
         firstItem.length === 1 &&
-        firstItem[0] !== ""
+        firstItem[0] !== "" &&
+        document.lineAt(cursorIndex).text.trim() === ""
       ) {
         let stack: string = opcode.execute(firstItem[0], lineArr[1].trim());
-        // console.log(commentIndexStart);
-        // console.log(commentIndexEnd);
+        console.log(commentIndexStart);
+        console.log(commentIndexEnd);
 
         editor.edit((editBuilder) => {
           editBuilder.delete(
