@@ -22,6 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
+  // vscode.window.
   vscode.window.onDidChangeTextEditorSelection(async (onChange) => {
     const editor = onChange.textEditor;
     const document = onChange.textEditor.document;
@@ -60,23 +61,25 @@ export function activate(context: vscode.ExtensionContext) {
         document.lineAt(cursorIndex).text.trim() === ""
       ) {
         let stack: string = opcode.execute(firstItem[0], lineArr[1].trim());
-        console.log(commentIndexStart);
-        console.log(commentIndexEnd);
+        // console.log(commentIndexStart);
+        // console.log(commentIndexEnd);
 
         editor.edit((editBuilder) => {
-          editBuilder.delete(
-            new vscode.Range(
-              new vscode.Position(cursorIndex - 1, commentIndexStart),
-              new vscode.Position(cursorIndex - 1, commentIndexEnd + 1),
-            ),
-          );
+          // editBuilder.delete(
+          //   new vscode.Range(
+          //     new vscode.Position(cursorIndex - 1, commentIndexStart),
+          //     new vscode.Position(cursorIndex - 1, commentIndexEnd + 1),
+          //   ),
+          // );
 
-          editBuilder.replace(
-            new vscode.Position(cursorIndex - 1, commentIndexStart),
-            `// ${stack}`,
-          );
+          // editBuilder.replace(
+          //   new vscode.Position(cursorIndex - 1, commentIndexStart),
+          //   `// ${stack}`,
+          // );
 
-          editBuilder.insert(selection.active, `    // ${stack}`);
+          // editBuilder.insert(selection.active, `    // ${stack}`);
+
+          editBuilder.insert(selection.active, `    // ${lineArr[1]}`);
 
           vscode.window.showTextDocument(document).then((editor) => {
             editor.selection = new vscode.Selection(
