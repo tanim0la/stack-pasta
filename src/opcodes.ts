@@ -1,17 +1,21 @@
 import * as vscode from "vscode";
 
 export class Opcode {
-  protected getStack(stack: string): string[] {
+  public filterStack(arr: string[]): string[] {
     let filteredStack = [];
 
-    // Remove the square bracket []
-    const a: string = stack.slice(1, -1);
-
-    for (let item of a.split(",")) {
+    for (let item of arr) {
       if (item.trim() !== "") {
-        filteredStack.push(item);
+        filteredStack.push(item.trim());
       }
     }
+    return filteredStack;
+  }
+
+  protected getStack(stack: string): string[] {
+    const a: string = stack.slice(1, -1);
+
+    let filteredStack = this.filterStack(a.split(","));
 
     if (filteredStack.length <= 2) {
       return filteredStack;
@@ -28,10 +32,6 @@ export class Opcode {
 
     return [item1, item2, a.slice(secondEIndex + 1)];
   }
-
-  // protected getStackLength(stack: string): number {
-  //   return stack.slice(1, -1).split(",").length;
-  // }
 
   public execute(opcode: string, stack: string): string {
     switch (opcode) {
@@ -71,13 +71,13 @@ export class Opcode {
         }]`;
         return newStack;
       }
-      case "addmob": {
+      case "addmod": {
         let getStack = this.getStack(stack);
         let newStack = `[(${getStack[0]} + ${getStack[1]}),${getStack[2]}]`;
         newStack = this.execute("mod", newStack);
         return newStack;
       }
-      case "mulmob": {
+      case "mulmod": {
         let getStack = this.getStack(stack);
         let newStack = `[(${getStack[0]} * ${getStack[1]}),${getStack[2]}]`;
         newStack = this.execute("mod", newStack);
