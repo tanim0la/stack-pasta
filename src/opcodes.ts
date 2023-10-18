@@ -37,6 +37,16 @@ export class Opcode {
     let tempOpcode = opcode;
     if (tempOpcode.includes("0x")) {
       opcode = "push";
+    } else if (
+      tempOpcode.slice(0, 3) === "dup" &&
+      parseInt(tempOpcode.slice(3)) <= 16
+    ) {
+      opcode = "dup";
+    } else if (
+      tempOpcode.slice(0, 4) === "swap" &&
+      parseInt(tempOpcode.slice(4)) <= 16
+    ) {
+      opcode = "swap";
     }
 
     switch (opcode) {
@@ -714,6 +724,40 @@ export class Opcode {
           }]`;
         }
         return newStack;
+      }
+      case "dup": {
+        let index = parseInt(tempOpcode.slice(3)) - 1;
+
+        let stackString = stack.slice(1, -1);
+        let stackArr = stackString.split(",");
+        if (index <= stackArr.length - 1) {
+          return `[${stackArr[index].trim()}, ${stackString}]`;
+        } else {
+          return `[undefined, ${stackString}]`;
+        }
+      }
+      case "swap": {
+        let index = parseInt(tempOpcode.slice(4)); //5
+
+        let stackString = stack.slice(1, -1);
+
+        let stackArr = stackString.split(","); //4
+
+        if (index < stackArr.length) {
+          [stackArr[0], stackArr[index]] = [
+            stackArr[index].trim(),
+            ` ${stackArr[0]}`,
+          ];
+
+          return `[${stackArr.map((item) => {
+            return item;
+          })}]`;
+        } else {
+          stackArr[0] = "undefined";
+          return `[${stackArr.map((item) => {
+            return item;
+          })}]`;
+        }
       }
       default: {
         return stack;
