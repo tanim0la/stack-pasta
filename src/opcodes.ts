@@ -1,4 +1,5 @@
-import * as vscode from "vscode";
+import { constants } from "buffer";
+import { comments } from "vscode";
 
 export class Opcode {
   public filterStack(arr: string[]): string[] {
@@ -39,14 +40,24 @@ export class Opcode {
       opcode = "push";
     } else if (
       tempOpcode.slice(0, 3) === "dup" &&
-      parseInt(tempOpcode.slice(3)) <= 16
+      parseInt(tempOpcode.slice(3)) <= 16 &&
+      parseInt(tempOpcode.slice(3)) >= 1
     ) {
       opcode = "dup";
     } else if (
       tempOpcode.slice(0, 4) === "swap" &&
-      parseInt(tempOpcode.slice(4)) <= 16
+      parseInt(tempOpcode.slice(4)) <= 16 &&
+      parseInt(tempOpcode.slice(4)) >= 1
     ) {
       opcode = "swap";
+    } else if (
+      tempOpcode.slice(0, 3) === "log" &&
+      parseInt(tempOpcode.slice(3)) <= 4 &&
+      parseInt(tempOpcode.slice(3)) >= 0
+    ) {
+      opcode = "log";
+    } else if (tempOpcode.includes("[") && tempOpcode.includes("]")) {
+      tempOpcode = opcode.slice(1, -1);
     }
 
     switch (opcode) {
@@ -71,14 +82,28 @@ export class Opcode {
         }]`;
         return newStack;
       }
-      case "div" || "sdiv": {
+      case "div": {
         let getStack = this.getStack(stack);
         let newStack = `[${getStack[0]} // ${getStack[1]}${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
         return newStack;
       }
-      case "mod" || "smod": {
+      case "sdiv": {
+        let getStack = this.getStack(stack);
+        let newStack = `[${getStack[0]} // ${getStack[1]}${
+          getStack.length > 2 ? "," + getStack[2] : ""
+        }]`;
+        return newStack;
+      }
+      case "mod": {
+        let getStack = this.getStack(stack);
+        let newStack = `[${getStack[0]} % ${getStack[1]}${
+          getStack.length > 2 ? "," + getStack[2] : ""
+        }]`;
+        return newStack;
+      }
+      case "smod": {
         let getStack = this.getStack(stack);
         let newStack = `[${getStack[0]} % ${getStack[1]}${
           getStack.length > 2 ? "," + getStack[2] : ""
@@ -105,18 +130,43 @@ export class Opcode {
         return newStack;
       }
       case "signextend": {
-        // let getStack = this.getStack(stack);
-        // let newStack = `[${getStack[0]} - ${getStack[1]},${getStack[2]}]`;
-        // return newStack;
+        let getStack = this.getStack(stack);
+        let newStack;
+
+        if (getStack[0] !== undefined && getStack[1] !== undefined) {
+          newStack = `[signextend[${getStack[0]}]${
+            getStack.length > 2 ? "," + getStack[2] : ""
+          }]`;
+        } else {
+          newStack = `[undefined${
+            getStack.length > 2 ? "," + getStack[2] : ""
+          }]`;
+        }
+
+        return newStack;
       }
-      case "lt" || "slt": {
+      case "lt": {
         let getStack = this.getStack(stack);
         let newStack = `[${getStack[0]} < ${getStack[1]}${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
         return newStack;
       }
-      case "gt" || "sgt": {
+      case "slt": {
+        let getStack = this.getStack(stack);
+        let newStack = `[${getStack[0]} < ${getStack[1]}${
+          getStack.length > 2 ? "," + getStack[2] : ""
+        }]`;
+        return newStack;
+      }
+      case "gt": {
+        let getStack = this.getStack(stack);
+        let newStack = `[${getStack[0]} > ${getStack[1]}${
+          getStack.length > 2 ? "," + getStack[2] : ""
+        }]`;
+        return newStack;
+      }
+      case "sgt": {
         let getStack = this.getStack(stack);
         let newStack = `[${getStack[0]} > ${getStack[1]}${
           getStack.length > 2 ? "," + getStack[2] : ""
@@ -178,9 +228,20 @@ export class Opcode {
         return newStack;
       }
       case "byte": {
-        // let getStack = this.getStack(stack);
-        // let newStack = `[${getStack[0]} < ${getStack[1]},${getStack[2]}]`;
-        // return newStack;
+        let getStack = this.getStack(stack);
+        let newStack;
+
+        if (getStack[0] !== undefined && getStack[1] !== undefined) {
+          newStack = `[byte[${getStack[0]}]${
+            getStack.length > 2 ? "," + getStack[2] : ""
+          }]`;
+        } else {
+          newStack = `[undefined${
+            getStack.length > 2 ? "," + getStack[2] : ""
+          }]`;
+        }
+
+        return newStack;
       }
       case "shl": {
         let getStack = this.getStack(stack);
@@ -189,7 +250,14 @@ export class Opcode {
         }]`;
         return newStack;
       }
-      case "shr" || "sar": {
+      case "shr": {
+        let getStack = this.getStack(stack);
+        let newStack = `[${getStack[1]} >> ${getStack[0]}${
+          getStack.length > 2 ? "," + getStack[2] : ""
+        }]`;
+        return newStack;
+      }
+      case "sar": {
         let getStack = this.getStack(stack);
         let newStack = `[${getStack[1]} >> ${getStack[0]}${
           getStack.length > 2 ? "," + getStack[2] : ""
@@ -313,7 +381,45 @@ export class Opcode {
         }
         return newStack;
       }
-      case "calldatacopy" || "codecopy" || "returndatacopy": {
+      case "calldatacopy": {
+        let getStack = this.getStack(stack);
+        let newStack;
+
+        if (getStack.length < 3) {
+          newStack = "[undefined]";
+        } else {
+          getStack = this.getStack(`[${getStack[2].trim()}]`);
+
+          if (getStack.length === 1) {
+            newStack = "[]";
+          } else {
+            newStack = `[${getStack[1]}${
+              getStack.length > 2 ? "," + getStack[2] : ""
+            }]`;
+          }
+        }
+        return newStack;
+      }
+      case "codecopy": {
+        let getStack = this.getStack(stack);
+        let newStack;
+
+        if (getStack.length < 3) {
+          newStack = "[undefined]";
+        } else {
+          getStack = this.getStack(`[${getStack[2].trim()}]`);
+
+          if (getStack.length === 1) {
+            newStack = "[]";
+          } else {
+            newStack = `[${getStack[1]}${
+              getStack.length > 2 ? "," + getStack[2] : ""
+            }]`;
+          }
+        }
+        return newStack;
+      }
+      case "returndatacopy": {
         let getStack = this.getStack(stack);
         let newStack;
 
@@ -347,25 +453,6 @@ export class Opcode {
         }
         return newStack;
       }
-      // case "codecopy": {
-      //   let getStack = this.getStack(stack);
-      //   let newStack;
-
-      //   if (getStack.length < 3) {
-      //     newStack = "[undefined]";
-      //   } else {
-      //     getStack = this.getStack(`[${getStack[2].trim()}]`);
-
-      //     if (getStack.length === 1) {
-      //       newStack = "[]";
-      //     } else {
-      //       newStack = `[${getStack[1]}${
-      //         getStack.length > 2 ? "," + getStack[2] : ""
-      //       }]`;
-      //     }
-      //   }
-      //   return newStack;
-      // }
       case "gasprice": {
         let getStack = this.getStack(stack);
         let newStack;
@@ -608,10 +695,45 @@ export class Opcode {
         }
         return newStack;
       }
-      case "mstore" || "mstore8" || "sstore" || "jumpi": {
+      case "mstore": {
         let getStack = this.getStack(stack);
         let newStack;
-
+        if (getStack.length < 2) {
+          newStack = "[undefined]";
+        } else if (getStack.length === 2) {
+          newStack = `[]`;
+        } else {
+          newStack = `[${getStack[2].trim()}]`;
+        }
+        return newStack;
+      }
+      case "mstore8": {
+        let getStack = this.getStack(stack);
+        let newStack;
+        if (getStack.length < 2) {
+          newStack = "[undefined]";
+        } else if (getStack.length === 2) {
+          newStack = `[]`;
+        } else {
+          newStack = `[${getStack[2].trim()}]`;
+        }
+        return newStack;
+      }
+      case "sstore": {
+        let getStack = this.getStack(stack);
+        let newStack;
+        if (getStack.length < 2) {
+          newStack = "[undefined]";
+        } else if (getStack.length === 2) {
+          newStack = `[]`;
+        } else {
+          newStack = `[${getStack[2].trim()}]`;
+        }
+        return newStack;
+      }
+      case "jumpi": {
+        let getStack = this.getStack(stack);
+        let newStack;
         if (getStack.length < 2) {
           newStack = "[undefined]";
         } else if (getStack.length === 2) {
@@ -727,41 +849,183 @@ export class Opcode {
       }
       case "dup": {
         let index = parseInt(tempOpcode.slice(3)) - 1;
-
         let stackString = stack.slice(1, -1);
-        let stackArr = stackString.split(",");
+        let stackArr = this.filterStack(stackString.split(","));
+
         if (index <= stackArr.length - 1) {
           return `[${stackArr[index].trim()}, ${stackString}]`;
         } else {
-          return `[undefined, ${stackString}]`;
+          return `[${
+            stackArr.length === 0 ? "undefined" : `undefined, ${stackString}`
+          }]`;
         }
       }
       case "swap": {
-        let index = parseInt(tempOpcode.slice(4)); //5
-
+        let index = parseInt(tempOpcode.slice(4));
         let stackString = stack.slice(1, -1);
-
-        let stackArr = stackString.split(","); //4
+        let stackArr = stackString.split(",");
 
         if (index < stackArr.length) {
           [stackArr[0], stackArr[index]] = [
             stackArr[index].trim(),
             ` ${stackArr[0]}`,
           ];
-
-          return `[${stackArr.map((item) => {
-            return item;
-          })}]`;
         } else {
           stackArr[0] = "undefined";
-          return `[${stackArr.map((item) => {
-            return item;
+        }
+        return `[${stackArr.slice(0).map((item) => {
+          return `${item}`;
+        })}]`;
+      }
+      case "log": {
+        let index = parseInt(tempOpcode.slice(3));
+        let stackString = stack.slice(1, -1);
+        let stackArr = this.filterStack(stackString.split(","));
+
+        if (index === stackArr.length - 2) {
+          return `[]`;
+        } else if (index <= stackArr.length - 2) {
+          return `[${stackArr[index + 2]}${stackArr
+            .slice(index + 3)
+            .map((item) => {
+              return `, ${item}`;
+            })}]`;
+        } else {
+          return `[undefined]`;
+        }
+      }
+      case "create": {
+        let stackString = stack.slice(1, -1);
+        let stackArr = this.filterStack(stackString.split(","));
+
+        if (stackArr.length < 3) {
+          return `[undefined]`;
+        } else {
+          return `[address,${stackArr.slice(3).map((item) => {
+            return ` ${item}`;
           })}]`;
         }
       }
+      case "call": {
+        let stackString = stack.slice(1, -1);
+        let stackArr = this.filterStack(stackString.split(","));
+
+        if (stackArr.length < 7) {
+          return `[undefined]`;
+        } else {
+          return `[success,${stackArr.slice(7).map((item) => {
+            return ` ${item}`;
+          })}]`;
+        }
+      }
+      case "callcode": {
+        let stackString = stack.slice(1, -1);
+        let stackArr = this.filterStack(stackString.split(","));
+
+        if (stackArr.length < 7) {
+          return `[undefined]`;
+        } else {
+          return `[success,${stackArr.slice(7).map((item) => {
+            return ` ${item}`;
+          })}]`;
+        }
+      }
+      case "return": {
+        let getStack = this.getStack(stack);
+        let newStack;
+        if (getStack.length < 2) {
+          newStack = "[undefined]";
+        } else if (getStack.length === 2) {
+          newStack = `[]`;
+        } else {
+          newStack = `[${getStack[2].trim()}]`;
+        }
+        return newStack;
+      }
+      case "delegatecall": {
+        let stackString = stack.slice(1, -1);
+        let stackArr = this.filterStack(stackString.split(","));
+
+        if (stackArr.length < 6) {
+          return `[undefined]`;
+        } else {
+          return `[success,${stackArr.slice(6).map((item) => {
+            return ` ${item}`;
+          })}]`;
+        }
+      }
+      case "create2": {
+        let stackString = stack.slice(1, -1);
+        let stackArr = this.filterStack(stackString.split(","));
+
+        if (stackArr.length < 4) {
+          return `[undefined]`;
+        } else {
+          return `[address,${stackArr.slice(4).map((item) => {
+            return ` ${item}`;
+          })}]`;
+        }
+      }
+      case "staticcall": {
+        let stackString = stack.slice(1, -1);
+        let stackArr = this.filterStack(stackString.split(","));
+
+        if (stackArr.length < 6) {
+          return `[undefined]`;
+        } else {
+          return `[success,${stackArr.slice(6).map((item) => {
+            return ` ${item}`;
+          })}]`;
+        }
+      }
+      case "revert": {
+        let getStack = this.getStack(stack);
+        let newStack;
+        if (getStack.length < 2) {
+          newStack = "[undefined]";
+        } else if (getStack.length === 2) {
+          newStack = `[]`;
+        } else {
+          newStack = `[${getStack[2].trim()}]`;
+        }
+        return newStack;
+      }
+      case "selfdestruct": {
+        let getStack = this.getStack(stack);
+        let newStack;
+
+        if (getStack.length === 0) {
+          newStack = `[${getStack[0]}]`;
+        } else if (getStack.length === 1) {
+          newStack = `[]`;
+        } else {
+          newStack = `[${getStack[1]}${
+            getStack.length > 2 ? "," + getStack[2] : ""
+          }]`;
+        }
+        return newStack;
+      }
       default: {
-        return stack;
+        let getStack = stack.slice(1, -1);
+        let getLen = this.filterStack(stack.slice(1, -1).split(",")).length;
+
+        let newStack = `[${tempOpcode}${getLen > 0 ? ", " + getStack : ""}]`;
+        return newStack;
       }
     }
   }
 }
+
+// issue with swap, if its remaining 1 item on stack (has , at the end) (done)
+
+// jumpdest (done)
+
+// constant (done)
+
+// macro i.e has "()"
+
+// operations should have ()
+
+// undefined should change to stack underflow
+
+// if number is typed, change to hex in opcode and stack comment
