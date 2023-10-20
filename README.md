@@ -7,10 +7,7 @@ This extension makes life eaiser for HUFFOOOORS, as it copies and updates previo
 Hitting Enter ⏎ on your keyboard after each opcode does the magic.
 
 
-https://github.com/tanim0la/stack-pasta/assets/36541366/553deaaf-5e9a-4f44-9dae-20806d9d18ec
-
-
-
+![stack_pasta](https://github.com/tanim0la/stack-pasta/assets/36541366/4b42d95c-a7c2-4b16-916f-f6db70f42f6d)
 
 
 
