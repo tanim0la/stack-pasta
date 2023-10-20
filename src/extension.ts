@@ -22,7 +22,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  // vscode.window.
   vscode.window.onDidChangeTextEditorSelection(async (onChange) => {
     const editor = onChange.textEditor;
     const document = onChange.textEditor.document;
@@ -41,68 +40,84 @@ export function activate(context: vscode.ExtensionContext) {
       const selection = editor.selection;
 
       // Get the position of the cursor
-      let cursorIndex = selection.anchor.line;
+      let cursorIndex: number = selection.anchor.line - 1;
 
       // Get the text on the cursor index
-      let cursorIndexText = document.lineAt(
-        cursorIndex > 0 ? cursorIndex - 1 : cursorIndex,
-      ).text;
+      let lineAt = document.lineAt(cursorIndex);
+      let cursorIndexText: string = lineAt.text;
+      let lineArr: string[] = cursorIndexText.toString().split("//");
+      let filteredStack: string[] = opcode.filterStack(lineArr);
 
-      let commentIndexStart: number = cursorIndexText.toString().indexOf("//");
-      let commentIndexEnd: number = cursorIndexText.toString().indexOf("]");
-      let lineArr = cursorIndexText.toString().split("//");
-      let firstItem = lineArr[0].trim().split(" ");
-
-      console.log(document.lineAt(cursorIndex).text.trim() === "");
       if (
-        lineArr.length === 2 &&
-        firstItem.length === 1 &&
-        firstItem[0] !== "" &&
-        document.lineAt(cursorIndex).text.trim() === ""
+        filteredStack.length === 1 &&
+        !cursorIndexText.includes(":") &&
+        !cursorIndexText.includes("//") &&
+        !cursorIndexText.includes("#define") &&
+        !cursorIndexText.includes("}")
       ) {
-        let stack: string =
-          lineArr[1].trim().slice(1, -1).trim() === ""
-            ? lineArr[1].trim()
-            : opcode.execute(firstItem[0], lineArr[1].trim());
-        // console.log(commentIndexStart);
-        // console.log(commentIndexEnd);
+        let isDone: boolean = false;
+        let seenPrevStack: boolean = false;
+        let commentIndexStart: number = 0;
+        let prevStackComment: string = "";
 
-        editor.edit((editBuilder) => {
-          editBuilder.delete(
-            new vscode.Range(
-              new vscode.Position(cursorIndex - 1, commentIndexStart),
-              new vscode.Position(cursorIndex - 1, commentIndexEnd + 1),
-            ),
-          );
+        for (let i = cursorIndex - 1; i >= 0; i--) {
+          let prevText: string = document.lineAt(i).text;
+          let prevTextArr: string[] = prevText.toString().split("//");
 
-          editBuilder.replace(
-            new vscode.Position(cursorIndex - 1, commentIndexStart),
-            `// ${stack}`,
-          );
+          let filterPrevTextArr: string[] = opcode.filterStack(prevTextArr);
 
-          editBuilder.insert(selection.active, `    // ${stack}`);
+          if (
+            filterPrevTextArr.length === 2 &&
+            filterPrevTextArr[0].trim().split(" ").length === 1
+          ) {
+            prevStackComment = filterPrevTextArr[1];
+            commentIndexStart = prevText.toString().indexOf("//");
+            seenPrevStack = true;
+            isDone = true;
+          } else {
+            for (let item of filterPrevTextArr) {
+              if (
+                item.includes("#define") ||
+                item.includes("{") ||
+                item.includes("}")
+              ) {
+                isDone = true;
+              }
+            }
+          }
 
-          // editBuilder.insert(selection.active, `    // ${lineArr[1]}`);
+          if (isDone) {
+            break;
+          }
+        }
 
-          vscode.window.showTextDocument(document).then((editor) => {
-            editor.selection = new vscode.Selection(
+        if (
+          seenPrevStack &&
+          prevStackComment.includes("[") &&
+          prevStackComment.includes("]")
+        ) {
+          let stack: string = `// ${opcode.execute(
+            filteredStack[0],
+            prevStackComment,
+          )}`;
+
+          let padding =
+            commentIndexStart + stack.length - lineAt.range.end.character;
+
+          stack = stack.padStart(padding, " ");
+
+          editor.edit((editBuilder) => {
+            editBuilder.insert(
               new vscode.Position(
-                selection.active.line,
-                selection.active.character,
+                cursorIndex,
+                commentIndexStart + (stack.length - padding),
               ),
-              new vscode.Position(
-                selection.active.line,
-                selection.active.character,
-              ),
-            );
-
-            editor.revealRange(
-              editor.selection,
-              vscode.TextEditorRevealType.Default,
+              stack,
             );
           });
-        });
+        }
       }
+
       prevLineCount = editor.document.lineCount;
     }
   });

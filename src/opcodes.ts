@@ -13,6 +13,10 @@ export class Opcode {
     return filteredStack;
   }
 
+  protected checkUndefined(stack: string): string {
+    return stack.includes("undefined") ? `[stack_underflow]` : stack;
+  }
+
   protected getStack(stack: string): string[] {
     const a: string = stack.slice(1, -1);
 
@@ -58,75 +62,107 @@ export class Opcode {
       opcode = "log";
     } else if (tempOpcode.includes("[") && tempOpcode.includes("]")) {
       tempOpcode = opcode.slice(1, -1);
+    } else if (tempOpcode.includes("(") && tempOpcode.includes(")")) {
+      opcode = "macrofunction";
     }
 
     switch (opcode) {
       case "add": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} + ${getStack[1]}${
+        let newStack = `[(${getStack[0]} + ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "mul": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} * ${getStack[1]}${
+        let newStack = `[(${getStack[0]} * ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "sub": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} - ${getStack[1]}${
+        let newStack = `[(${getStack[0]} - ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "div": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} // ${getStack[1]}${
+        let newStack = `[(${getStack[0]} // ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "sdiv": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} // ${getStack[1]}${
+        let newStack = `[(${getStack[0]} // ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "mod": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} % ${getStack[1]}${
+        let newStack = `[(${getStack[0]} % ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "smod": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} % ${getStack[1]}${
+        let newStack = `[(${getStack[0]} % ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "addmod": {
         let getStack = this.getStack(stack);
         let newStack = `[(${getStack[0]} + ${getStack[1]}),${getStack[2]}]`;
         newStack = this.execute("mod", newStack);
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "mulmod": {
         let getStack = this.getStack(stack);
         let newStack = `[(${getStack[0]} * ${getStack[1]}),${getStack[2]}]`;
         newStack = this.execute("mod", newStack);
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "exp": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} ** ${getStack[1]}${
+        let newStack = `[(${getStack[0]} ** ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "signextend": {
@@ -143,41 +179,58 @@ export class Opcode {
           }]`;
         }
 
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "lt": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} < ${getStack[1]}${
+        let newStack = `[(${getStack[0]} < ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "slt": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} < ${getStack[1]}${
+        let newStack = `[(${getStack[0]} < ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "gt": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} > ${getStack[1]}${
+        let newStack = `[(${getStack[0]} > ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "sgt": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} > ${getStack[1]}${
+        let newStack = `[(${getStack[0]} > ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "eq": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} == ${getStack[1]}${
+        let newStack = `[(${getStack[0]} == ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "iszero": {
@@ -185,33 +238,45 @@ export class Opcode {
         let newStack;
 
         if (getStack.length <= 1) {
-          newStack = `[${getStack[0]} == 0]`;
+          newStack = `[(${getStack[0]} == 0)]`;
         } else {
-          newStack = `[${getStack[0]} == 0, ${getStack[1]}${
+          newStack = `[(${getStack[0]} == 0), ${getStack[1]}${
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "and": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} & ${getStack[1]}${
+        let newStack = `[(${getStack[0]} & ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "or": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} | ${getStack[1]}${
+        let newStack = `[(${getStack[0]} | ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "xor": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[0]} ^ ${getStack[1]}${
+        let newStack = `[(${getStack[0]} ^ ${getStack[1]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "not": {
@@ -225,6 +290,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "byte": {
@@ -241,27 +309,38 @@ export class Opcode {
           }]`;
         }
 
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "shl": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[1]} << ${getStack[0]}${
+        let newStack = `[(${getStack[1]} << ${getStack[0]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "shr": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[1]} >> ${getStack[0]}${
+        let newStack = `[(${getStack[1]} >> ${getStack[0]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "sar": {
         let getStack = this.getStack(stack);
-        let newStack = `[${getStack[1]} >> ${getStack[0]}${
+        let newStack = `[(${getStack[1]} >> ${getStack[0]})${
           getStack.length > 2 ? "," + getStack[2] : ""
         }]`;
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "sha3": {
@@ -271,10 +350,12 @@ export class Opcode {
         if (getStack[0] !== undefined && getStack[1] !== undefined) {
           newStack = `[hash${getStack.length > 2 ? "," + getStack[2] : ""}]`;
         } else {
-          newStack = `[undefinedHash${
+          newStack = `[undefined${
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
 
         return newStack;
       }
@@ -291,6 +372,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "balance": {
@@ -306,6 +390,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "origin": {
@@ -321,6 +408,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "caller": {
@@ -336,6 +426,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "callvalue": {
@@ -351,6 +444,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "calldataload": {
@@ -364,6 +460,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "calldatasize": {
@@ -379,6 +478,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "calldatacopy": {
@@ -398,6 +500,9 @@ export class Opcode {
             }]`;
           }
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "codecopy": {
@@ -417,6 +522,9 @@ export class Opcode {
             }]`;
           }
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "returndatacopy": {
@@ -436,6 +544,9 @@ export class Opcode {
             }]`;
           }
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "codesize": {
@@ -451,6 +562,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "gasprice": {
@@ -466,6 +580,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "extcodesize": {
@@ -481,6 +598,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "extcodecopy": {
@@ -500,6 +620,9 @@ export class Opcode {
             newStack = `[${getStack[2].trim()}]`;
           }
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "returndatasize": {
@@ -515,6 +638,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "extcodehash": {
@@ -530,6 +656,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "blockhash": {
@@ -545,6 +674,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "coinbase": {
@@ -560,6 +692,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "timestamp": {
@@ -575,6 +710,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "number": {
@@ -590,6 +728,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "prevrandao": {
@@ -605,6 +746,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "gaslimit": {
@@ -620,6 +764,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "chainid": {
@@ -635,6 +782,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "selfbalance": {
@@ -650,6 +800,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "basefee": {
@@ -665,6 +818,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "pop": {
@@ -680,6 +836,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "mload": {
@@ -693,6 +852,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "mstore": {
@@ -705,6 +867,9 @@ export class Opcode {
         } else {
           newStack = `[${getStack[2].trim()}]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "mstore8": {
@@ -717,6 +882,9 @@ export class Opcode {
         } else {
           newStack = `[${getStack[2].trim()}]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "sstore": {
@@ -729,6 +897,9 @@ export class Opcode {
         } else {
           newStack = `[${getStack[2].trim()}]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "jumpi": {
@@ -741,6 +912,9 @@ export class Opcode {
         } else {
           newStack = `[${getStack[2].trim()}]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "sload": {
@@ -754,6 +928,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "jump": {
@@ -769,6 +946,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "pc": {
@@ -784,6 +964,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "msize": {
@@ -799,6 +982,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "gas": {
@@ -814,6 +1000,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "push0": {
@@ -829,6 +1018,9 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "push": {
@@ -845,20 +1037,28 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "dup": {
         let index = parseInt(tempOpcode.slice(3)) - 1;
         let stackString = stack.slice(1, -1);
         let stackArr = this.filterStack(stackString.split(","));
+        let newStack;
 
         if (index <= stackArr.length - 1) {
-          return `[${stackArr[index].trim()}, ${stackString}]`;
+          newStack = `[${stackArr[index].trim()}, ${stackString}]`;
         } else {
-          return `[${
+          newStack = `[${
             stackArr.length === 0 ? "undefined" : `undefined, ${stackString}`
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
+        return newStack;
       }
       case "swap": {
         let index = parseInt(tempOpcode.slice(4));
@@ -873,50 +1073,69 @@ export class Opcode {
         } else {
           stackArr[0] = "undefined";
         }
-        return `[${stackArr.slice(0).map((item) => {
+        let newStack = `[${stackArr.slice(0).map((item) => {
           return `${item}`;
         })}]`;
+
+        newStack = this.checkUndefined(newStack);
+
+        return newStack;
       }
       case "log": {
         let index = parseInt(tempOpcode.slice(3));
         let stackString = stack.slice(1, -1);
         let stackArr = this.filterStack(stackString.split(","));
+        let newStack;
 
         if (index === stackArr.length - 2) {
-          return `[]`;
+          newStack = `[]`;
         } else if (index <= stackArr.length - 2) {
-          return `[${stackArr[index + 2]}${stackArr
+          newStack = `[${stackArr[index + 2]}${stackArr
             .slice(index + 3)
             .map((item) => {
               return `, ${item}`;
             })}]`;
         } else {
-          return `[undefined]`;
+          newStack = `[undefined]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
+        return newStack;
       }
       case "create": {
         let stackString = stack.slice(1, -1);
         let stackArr = this.filterStack(stackString.split(","));
+        let newStack;
 
         if (stackArr.length < 3) {
-          return `[undefined]`;
+          newStack = `[undefined]`;
         } else {
-          return `[address,${stackArr.slice(3).map((item) => {
+          newStack = `[address,${stackArr.slice(3).map((item) => {
             return ` ${item}`;
           })}]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
+        return newStack;
       }
       case "call": {
         let stackString = stack.slice(1, -1);
         let stackArr = this.filterStack(stackString.split(","));
+        let newStack;
 
         if (stackArr.length < 7) {
-          return `[undefined]`;
+          newStack = `[undefined]`;
         } else {
-          return `[success,${stackArr.slice(7).map((item) => {
+          newStack = `[success,${stackArr.slice(7).map((item) => {
             return ` ${item}`;
           })}]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
+        return newStack;
       }
       case "callcode": {
         let stackString = stack.slice(1, -1);
@@ -940,43 +1159,61 @@ export class Opcode {
         } else {
           newStack = `[${getStack[2].trim()}]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "delegatecall": {
         let stackString = stack.slice(1, -1);
         let stackArr = this.filterStack(stackString.split(","));
+        let newStack;
 
         if (stackArr.length < 6) {
-          return `[undefined]`;
+          newStack = `[undefined]`;
         } else {
-          return `[success,${stackArr.slice(6).map((item) => {
+          newStack = `[success,${stackArr.slice(6).map((item) => {
             return ` ${item}`;
           })}]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
+        return newStack;
       }
       case "create2": {
         let stackString = stack.slice(1, -1);
         let stackArr = this.filterStack(stackString.split(","));
+        let newStack;
 
         if (stackArr.length < 4) {
-          return `[undefined]`;
+          newStack = `[undefined]`;
         } else {
-          return `[address,${stackArr.slice(4).map((item) => {
+          newStack = `[address,${stackArr.slice(4).map((item) => {
             return ` ${item}`;
           })}]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
+        return newStack;
       }
       case "staticcall": {
         let stackString = stack.slice(1, -1);
         let stackArr = this.filterStack(stackString.split(","));
+        let newStack;
 
         if (stackArr.length < 6) {
-          return `[undefined]`;
+          newStack = `[undefined]`;
         } else {
-          return `[success,${stackArr.slice(6).map((item) => {
+          newStack = `[success,${stackArr.slice(6).map((item) => {
             return ` ${item}`;
           })}]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
+        return newStack;
       }
       case "revert": {
         let getStack = this.getStack(stack);
@@ -988,6 +1225,9 @@ export class Opcode {
         } else {
           newStack = `[${getStack[2].trim()}]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
       }
       case "selfdestruct": {
@@ -1003,7 +1243,13 @@ export class Opcode {
             getStack.length > 2 ? "," + getStack[2] : ""
           }]`;
         }
+
+        newStack = this.checkUndefined(newStack);
+
         return newStack;
+      }
+      case "macrofunction": {
+        return stack;
       }
       default: {
         let getStack = stack.slice(1, -1);
@@ -1022,10 +1268,10 @@ export class Opcode {
 
 // constant (done)
 
-// macro i.e has "()"
+// macro i.e has "()" (done)
 
-// operations should have ()
+// operations should have () (done)
 
-// undefined should change to stack underflow
+// undefined should change to stack underflow (done)
 
 // if number is typed, change to hex in opcode and stack comment

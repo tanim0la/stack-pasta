@@ -2,7 +2,7 @@
   "name": "stack-pasta",
   "displayName": "Stack Pasta",
   "description": "Automatically paste previous Huff stack comments ",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "tanim0la",
   "icon": "icon/pasta.jpg",
   "keywords": [

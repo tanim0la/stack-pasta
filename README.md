@@ -1,6 +1,6 @@
 # 🍝 Stack-Pasta 🍝
 
-This extension makes life eaiser for HUFFOOOORS, as it copies previous stack comment and paste in the next line (pasta 🍝). 
+This extension makes life eaiser for HUFFOOOORS, as it copies and updates previous stack comment and paste in the next line (pasta 🍝). 
 
 ## Features
 
@@ -18,10 +18,13 @@ Hitting Enter ⏎ on your keyboard after the first stack comment does the magic.
 
 ## Versions
 
-### 0.0.1
+### 0.1.0
 
 Initial release of Stack-Pasta.
 
+### 0.1.1
+
+Stack comments get updated automatically.
 
 ---
 
