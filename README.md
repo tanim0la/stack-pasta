@@ -22,7 +22,7 @@ Hitting Enter ⏎ on your keyboard after the first stack comment does the magic.
 
 Initial release of Stack-Pasta.
 
-### 0.1.1
+### 0.2.0
 
 Stack comments get updated automatically.
 
