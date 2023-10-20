@@ -4,9 +4,13 @@ This extension makes life eaiser for HUFFOOOORS, as it copies and updates previo
 
 ## Features
 
-Hitting Enter ⏎ on your keyboard after the first stack comment does the magic.
+Hitting Enter ⏎ on your keyboard after each opcode does the magic.
 
-![stack-pasta-demo](https://github.com/tanim0la/stack-pasta/assets/36541366/e18cfe6e-15c9-4192-9b8b-5f3ccdeb6109)
+
+https://github.com/tanim0la/stack-pasta/assets/36541366/553deaaf-5e9a-4f44-9dae-20806d9d18ec
+
+
+
 
 
 
