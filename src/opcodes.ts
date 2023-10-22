@@ -1093,7 +1093,7 @@ export class Opcode {
           newStack = `[${stackArr[index + 2]}${stackArr
             .slice(index + 3)
             .map((item) => {
-              return `, ${item}`;
+              return ` ${item}`;
             })}]`;
         } else {
           newStack = `[undefined]`;
