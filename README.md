@@ -27,5 +27,16 @@ Initial release of Stack-Pasta.
 
 Stack comments get updated automatically.
 
+### 0.2.1
+
+Stack pasta bug fix
+
+### 0.2.2
+
+Added reverse stack feature for those that adds stack item at the right most position in the stack
+
+#### How to enable:
+    vscode.settings > Extentions > StackPasta > Check the box to enable reverved stack
+
 ---
 

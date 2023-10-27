@@ -2,6 +2,17 @@ import { constants } from "buffer";
 import { comments } from "vscode";
 
 export class Opcode {
+  public reverveStack(stack: string): string {
+    let stackArr = stack.slice(1, -1).split(",");
+    let reversedStackArr = stackArr.reverse();
+
+    let newStack = `${reversedStackArr.map((item) => {
+      return ` ${item.trim()}`;
+    })}`.trim();
+
+    return `[${newStack}]`;
+  }
+
   public filterStack(arr: string[]): string[] {
     let filteredStack = [];
 

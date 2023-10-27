@@ -16,12 +16,6 @@ export function activate(context: vscode.ExtensionContext) {
     ? vscode.window.activeTextEditor.document.lineCount
     : 0;
 
-  let reverseStack: boolean = false;
-
-  vscode.commands.registerCommand("tester.helloWorld", () => {
-    reverseStack = !reverseStack;
-  });
-
   vscode.window.onDidChangeActiveTextEditor((editor) => {
     if (editor) {
       prevLineCount = editor.document.lineCount;
@@ -29,6 +23,9 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   vscode.window.onDidChangeTextEditorSelection(async (onChange) => {
+    const reverseStack: boolean =
+      vscode.workspace.getConfiguration("stackpasta").reversedstack;
+
     const editor = onChange.textEditor;
     const document = onChange.textEditor.document;
     const documentExt = document.uri.toString().slice(-5);
@@ -102,10 +99,19 @@ export function activate(context: vscode.ExtensionContext) {
           prevStackComment.includes("[") &&
           prevStackComment.includes("]")
         ) {
-          let stack: string = `// ${opcode.execute(
-            filteredStack[0],
-            prevStackComment,
-          )}`;
+          let stack: string = "";
+          if (reverseStack) {
+            let reversePrevStackComment = opcode.reverveStack(prevStackComment);
+            let tempStack = opcode.execute(
+              filteredStack[0],
+              reversePrevStackComment,
+            );
+            let reverseTempStack = opcode.reverveStack(tempStack);
+
+            stack = `// ${reverseTempStack}`;
+          } else {
+            stack = `// ${opcode.execute(filteredStack[0], prevStackComment)}`;
+          }
 
           let padding =
             commentIndexStart + stack.length - lineAt.range.end.character;
