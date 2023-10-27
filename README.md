@@ -38,5 +38,9 @@ Added reverse stack feature for those that adds stack item at the right most pos
 #### How to enable:
     vscode.settings > Extentions > StackPasta > Check the box to enable reverved stack
 
+### 0.2.3
+
+Stack pasta bug fix (`log` opcode)
+
 ---
 

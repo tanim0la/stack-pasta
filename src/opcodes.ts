@@ -1101,11 +1101,10 @@ export class Opcode {
         if (index === stackArr.length - 2) {
           newStack = `[]`;
         } else if (index <= stackArr.length - 2) {
-          newStack = `[${stackArr[index + 2]}${stackArr
-            .slice(index + 3)
-            .map((item) => {
-              return ` ${item}`;
-            })}]`;
+          newStack = stackArr.slice(index + 2).map((item) => {
+            return ` ${item}`;
+          });
+          newStack = `[${newStack.toString().trim()}]`;
         } else {
           newStack = `[undefined]`;
         }
