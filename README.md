@@ -1,6 +1,10 @@
 # 🍝 Stack-Pasta 🍝
 
-This extension makes life eaiser for HUFFOOOORS, as it copies and updates previous stack comment and paste in the next line (pasta 🍝). 
+This VScode extension makes life eaiser for HUFFOOOORS, as it copies and updates previous stack comment and paste in the next line (pasta 🍝). 
+
+## How To Use
+
+Search for "Stack Pasta" on VSCode, install and start Huffing.
 
 ## Features
 
