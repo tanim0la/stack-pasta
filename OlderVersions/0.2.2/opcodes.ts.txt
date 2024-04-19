@@ -1,3 +1,6 @@
+import { constants } from "buffer";
+import { comments } from "vscode";
+
 export class Opcode {
   public reverveStack(stack: string): string {
     let stackArr = stack.slice(1, -1).split(",");
@@ -1268,3 +1271,17 @@ export class Opcode {
     }
   }
 }
+
+// issue with swap, if its remaining 1 item on stack (has , at the end) (done)
+
+// jumpdest (done)
+
+// constant (done)
+
+// macro i.e has "()" (done)
+
+// operations should have () (done)
+
+// undefined should change to stack underflow (done)
+
+// if number is typed, change to hex in opcode and stack comment
