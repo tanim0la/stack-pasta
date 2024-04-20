@@ -70,6 +70,17 @@ export class Opcode {
       opcode = "log";
     } else if (tempOpcode.includes("[") && tempOpcode.includes("]")) {
       tempOpcode = opcode.slice(1, -1);
+    } else if (
+      tempOpcode.includes(")") &&
+      (tempOpcode.includes("__FUNC_SIG(") ||
+        tempOpcode.includes("__EVENT_HASH(") ||
+        tempOpcode.includes("__ERROR(") ||
+        tempOpcode.includes("__RIGHTPAD(") ||
+        tempOpcode.includes("__codesize(") ||
+        tempOpcode.includes("__tablestart(") ||
+        tempOpcode.includes("__tablesize("))
+    ) {
+      opcode = "builtin";
     } else if (tempOpcode.includes("(") && tempOpcode.includes(")")) {
       opcode = "macrofunction";
     }
@@ -1257,6 +1268,43 @@ export class Opcode {
       }
       case "macrofunction": {
         return stack;
+      }
+      case "builtin": {
+        let arg = tempOpcode.split("(")[1].slice(0, -1);
+        let item;
+
+        if (tempOpcode.includes("FUNC_SIG(")) {
+          item = `func_sig(${arg})`;
+        } else if (tempOpcode.includes("EVENT_HASH(")) {
+          item = `event_sig(${arg})`;
+        } else if (tempOpcode.includes("ERROR(")) {
+          item = `error_sig(${arg})`;
+        } else if (tempOpcode.includes("RIGHTPAD(")) {
+          item = `func_sig(${arg})`;
+        } else if (tempOpcode.includes("codesize(")) {
+          item = `code_size(${arg})`;
+        } else if (tempOpcode.includes("tablestart(")) {
+          item = `table_start`;
+        } else if (tempOpcode.includes("tablesize(")) {
+          item = `table_size`;
+        }
+
+        let getStack = this.getStack(stack);
+        let newStack;
+
+        if (getStack.length === 0) {
+          newStack = `[${item}]`;
+        } else if (getStack.length === 1) {
+          newStack = `[${item}, ${getStack[0]}]`;
+        } else {
+          newStack = `[${item}, ${getStack[0]}, ${getStack[1]}${
+            getStack.length > 2 ? "," + getStack[2] : ""
+          }]`;
+        }
+
+        newStack = this.checkUndefined(newStack);
+
+        return newStack;
       }
       default: {
         let getStack = stack.slice(1, -1);
