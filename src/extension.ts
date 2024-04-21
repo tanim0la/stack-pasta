@@ -60,7 +60,6 @@ export function activate(context: vscode.ExtensionContext) {
         !cursorIndexText.includes("}") &&
         filteredStack[0] !== "stop"
       ) {
-        let isDone: boolean = false;
         let seenPrevStack: boolean = false;
         let commentIndexStart: number = 0;
         let prevStackComment: string = "";
@@ -77,8 +76,14 @@ export function activate(context: vscode.ExtensionContext) {
           ) {
             prevStackComment = filterPrevTextArr[1];
             commentIndexStart = prevText.toString().indexOf("//");
-            seenPrevStack = true;
-            isDone = true;
+            seenPrevStack =
+              document
+                .lineAt(i + 1)
+                .text.trim()
+                .split(" ").length === 1
+                ? true
+                : false;
+            break;
           } else {
             for (let item of filterPrevTextArr) {
               if (
@@ -86,13 +91,9 @@ export function activate(context: vscode.ExtensionContext) {
                 item.includes("{") ||
                 item.includes("}")
               ) {
-                isDone = true;
+                break;
               }
             }
-          }
-
-          if (isDone) {
-            break;
           }
         }
 

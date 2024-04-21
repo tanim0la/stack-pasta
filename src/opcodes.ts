@@ -1,3 +1,5 @@
+import * as vscode from "vscode";
+
 export class Opcode {
   public reverveStack(stack: string): string {
     let stackArr = stack.slice(1, -1).split(",");
@@ -1267,6 +1269,18 @@ export class Opcode {
         return newStack;
       }
       case "macrofunction": {
+        if (vscode.window.activeTextEditor) {
+          const doc = vscode.window.activeTextEditor.document;
+          let lineCount = doc.lineCount;
+          console.log("here ", tempOpcode);
+
+          for (let i = 0; i < lineCount; i++) {
+            let text: string = doc.lineAt(i).text.toString();
+
+            // if (tempOpcode) {}
+          }
+        }
+
         return stack;
       }
       case "builtin": {
