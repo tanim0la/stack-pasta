@@ -1269,19 +1269,75 @@ export class Opcode {
         return newStack;
       }
       case "macrofunction": {
+        let takesAmount = 0;
+        let returnsAmount = 0;
+
         if (vscode.window.activeTextEditor) {
           const doc = vscode.window.activeTextEditor.document;
           let lineCount = doc.lineCount;
-          console.log("here ", tempOpcode);
+          // console.log("here ", tempOpcode);
+          let macroName = tempOpcode.slice(0, tempOpcode.indexOf("("));
 
           for (let i = 0; i < lineCount; i++) {
             let text: string = doc.lineAt(i).text.toString();
 
-            // if (tempOpcode) {}
+            if (
+              text.includes(macroName) &&
+              text.includes("#define") &&
+              (text.includes("macro") || text.includes("function"))
+            ) {
+              let takesIndex = text.indexOf("takes");
+              let returnsIndex = text.indexOf("returns");
+
+              if (takesIndex >= 0) {
+                takesAmount = parseInt(
+                  text.slice(
+                    text.indexOf("(", takesIndex) + 1,
+                    text.indexOf(")", takesIndex),
+                  ),
+                );
+
+                console.log(takesAmount);
+              }
+
+              if (returnsIndex >= 0) {
+                returnsAmount = parseInt(
+                  text.slice(
+                    text.indexOf("(", returnsIndex) + 1,
+                    text.indexOf(")", returnsIndex),
+                  ),
+                );
+
+                console.log(returnsAmount);
+              }
+
+              break;
+            }
           }
         }
 
-        return stack;
+        let getStack = this.getStack(stack);
+        let newStack;
+
+        console.log(getStack);
+        if (getStack.length < takesAmount) {
+          newStack = `[undefined]`;
+        } else {
+          let tempStack = getStack.slice(takesAmount);
+          for (let i = 0; i < returnsAmount; i++) {
+            tempStack.unshift(`retData${i + 1}`);
+          }
+
+          newStack = tempStack.map((item) => {
+            return ` ${item}`;
+          });
+
+          newStack = `[${newStack.toString().trim()}]`;
+        }
+
+        newStack = this.checkUndefined(newStack);
+
+        return newStack;
       }
       case "builtin": {
         let arg = tempOpcode.split("(")[1].slice(0, -1);
