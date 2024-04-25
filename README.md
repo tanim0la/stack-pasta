@@ -23,18 +23,6 @@ Hitting Enter ⏎ on your keyboard after each opcode does the magic.
 
 ## Versions
 
-### 0.1.0
-
-Initial release of Stack-Pasta.
-
-### 0.2.0
-
-Stack comments get updated automatically.
-
-### 0.2.1
-
-Stack pasta bug fix
-
 ### 0.2.2
 
 Added reverse stack feature for those that adds stack item at the right most position in the stack
@@ -46,5 +34,9 @@ Added reverse stack feature for those that adds stack item at the right most pos
 
 Stack pasta bug fix (`log` opcode)
 
----
+### 0.2.4
+Added support for:
+- `stop` opcode
+- Builtin functions like __FUNC_SIG() 
+- Infile macros and functions
 
