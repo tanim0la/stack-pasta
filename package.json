@@ -2,7 +2,7 @@
   "name": "stack-pasta",
   "displayName": "Stack Pasta",
   "description": "Automatically paste previous Huff stack comments ",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "publisher": "tanim0la",
   "icon": "icon/pasta.jpg",
   "keywords": [
@@ -38,11 +38,11 @@
         "title": "StackPasta",
         "properties": {
           "stackpasta.reversedstack": {
-          "type": "boolean",
-          "scope": "resource",
-          "default": false,
-          "description": "Adds item to the right most position in the stack"
-        }
+            "type": "boolean",
+            "scope": "resource",
+            "default": false,
+            "description": "Adds item to the right most position in the stack"
+          }
         }
       }
     ]

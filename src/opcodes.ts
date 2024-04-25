@@ -1275,7 +1275,6 @@ export class Opcode {
         if (vscode.window.activeTextEditor) {
           const doc = vscode.window.activeTextEditor.document;
           let lineCount = doc.lineCount;
-          // console.log("here ", tempOpcode);
           let macroName = tempOpcode.slice(0, tempOpcode.indexOf("("));
 
           for (let i = 0; i < lineCount; i++) {
@@ -1296,8 +1295,6 @@ export class Opcode {
                     text.indexOf(")", takesIndex),
                   ),
                 );
-
-                console.log(takesAmount);
               }
 
               if (returnsIndex >= 0) {
@@ -1307,8 +1304,6 @@ export class Opcode {
                     text.indexOf(")", returnsIndex),
                   ),
                 );
-
-                console.log(returnsAmount);
               }
 
               break;
@@ -1319,7 +1314,6 @@ export class Opcode {
         let getStack = this.getStack(stack);
         let newStack;
 
-        console.log(getStack);
         if (getStack.length < takesAmount) {
           newStack = `[undefined]`;
         } else {
